@@ -16,7 +16,7 @@ public class UserService {
             throw new sameLocation("You have Entered same source and destination,Please enter different locations");
         }
         tickets.add(t);
-        // System.out.println("Ticket reserved successfully for " + t.getName());
+       
     }
     public void TicketList() {
         if (tickets.isEmpty()) {
