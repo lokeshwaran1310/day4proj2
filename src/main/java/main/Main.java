@@ -37,7 +37,8 @@ public class Main {
                         catch(IOException exi){
                                   System.err.println("Error writing to log file: " + exi.getMessage());
                         } 
-                    } catch (exceptions.sameLocation e) {
+                    } 
+                    catch (exceptions.sameLocation e) {
                         System.out.println(e.getMessage());
                         FileWriter fw= null;
                         try{    

@@ -16,13 +16,14 @@ public class UserService {
             throw new sameLocation("You have Entered same source and destination,Please enter different locations");
         }
         tickets.add(t);
-        System.out.println("Ticket reserved successfully for " + t.getName());
+        // System.out.println("Ticket reserved successfully for " + t.getName());
     }
     public void TicketList() {
         if (tickets.isEmpty()) {
             System.out.println("No tickets reserved yet.");
             return;
         }
+        System.out.println("Tickets List:");
         for (Ticket t : tickets) {
             System.out.println("Name: " + t.getName());
             System.out.println("Age: " + t.getAge());
