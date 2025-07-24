@@ -1,0 +1,356 @@
+Repo Link
+---------
+https://github.com/lokeshwaran1310/day4proj2
+
+Program Structure
+-----------------
+
+└── lokeshwaran1310-day4proj2/
+    ├── README.md
+    ├── pom.xml
+    └── src/
+        ├── main/
+        │   └── java/
+        │       ├── com/
+        │       │   └── day4project2/
+        │       │       └── App.java
+        │       ├── exceptions/
+        │       │   ├── invalidAgeExceptions.java
+        │       │   └── sameLocation.java
+        │       ├── main/
+        │       │   └── Main.java
+        │       ├── models/
+        │       │   ├── Ticket.java
+        │       │   └── User.java
+        │       └── services/
+        │           └── UserService.java
+        └── test/
+            └── java/
+                └── com/
+                    └── day4project2/
+                        └── AppTest.java
+
+
+invalidAgeExceptions.java
+-------------------------
+
+package exceptions;
+
+public class invalidAgeExceptions extends Exception {
+    public invalidAgeExceptions(String message) {
+        super(message);
+    }
+    
+}
+
+
+sameLocation.java
+-----------------
+
+package exceptions;
+
+public class sameLocation extends Exception{
+    public sameLocation(String message){
+        super(message);
+    }
+    
+}
+
+
+Main.java
+---------
+
+package main;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+import models.Ticket;
+import services.UserService;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        UserService us=new UserService();
+        while(true){
+            System.out.println("1.Reserve a ticket");
+            System.out.println("2.Display Ticket details");
+            System.out.println("3.Exit");
+            System.out.println("Enter a choice");
+            int choice=sc.nextInt();
+            switch(choice){
+                case 1:
+                    String name=sc.next();
+                    int age=sc.nextInt();
+                    String source=sc.next();
+                    String destination=sc.next();
+                    boolean st=false;
+                    Ticket t=new Ticket(name,age,source,destination);
+                    try {
+                        us.createticket(t);
+                        st=true;
+                    } catch (exceptions.invalidAgeExceptions e) {
+                        System.out.println(e.getMessage());
+                        FileWriter fw= null;
+                        try{
+                            fw=new FileWriter("error.log",true);
+                            fw.write(e.getMessage()+"\n");
+                            fw.flush();
+                        }
+                        catch(IOException exi){
+                                  System.err.println("Error writing to log file: " + exi.getMessage());
+                        } 
+                    } 
+                    catch (exceptions.sameLocation e) {
+                        System.out.println(e.getMessage());
+                        FileWriter fw= null;
+                        try{    
+                            fw=new FileWriter("error.log",true);
+                            fw.write(e.getMessage()+"\n");
+                            fw.flush();
+                        }
+                        catch(IOException exi){
+                                  System.err.println("Error writing to log file: " + exi.getMessage());
+                        }   
+                    }   
+                    if(st) {
+                        System.out.println("Ticket reserved successfully for " + t.getName());
+                    }
+
+                    break;
+                case 2:
+                    us.TicketList();
+                    break;
+                case 3:
+                    System.out.println("Exit");
+                    return;
+
+            }
+
+            
+        }
+    }
+}
+
+
+Ticket.java
+-----------
+
+package models;
+
+public class Ticket extends User {
+    private String source;
+    private String destination;
+    public Ticket(String name, int age, String source, String destination) {
+        super(name,age);
+        this.source = source;
+        this.destination = destination;
+    }
+    public String getSource() {
+        return source;
+    }
+    public String getDestination() {
+        return destination;
+    }
+}
+
+
+User.java
+---------
+
+package models;
+
+public class User {
+    private String name;
+    private int age;    
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    public String getName() {
+        return name;
+    }
+    public int getAge() {
+        return age;
+    }
+
+}
+
+
+UserService.java
+----------------
+
+package services;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import exceptions.invalidAgeExceptions;
+import exceptions.sameLocation;
+import models.Ticket;
+public class UserService {
+    List <Ticket> tickets = new ArrayList<>();
+    public void createticket(Ticket t) throws invalidAgeExceptions, sameLocation {
+        if(t.getAge()<18){
+            throw new invalidAgeExceptions("User is underAged,Cannot reserve a ticket");
+        }
+        if(t.getSource().equals(t.getDestination())){
+            throw new sameLocation("You have Entered same source and destination,Please enter different locations");
+        }
+        tickets.add(t);
+       
+    }
+    public void TicketList() {
+        if (tickets.isEmpty()) {
+            System.out.println("No tickets reserved yet.");
+            return;
+        }
+        System.out.println("Tickets List:");
+        for (Ticket t : tickets) {
+            System.out.println("Name: " + t.getName());
+            System.out.println("Age: " + t.getAge());
+            System.out.println("Source: " + t.getSource());
+            System.out.println("Destination: " + t.getDestination());
+            System.out.println("-----------------------------");
+        }
+    }
+}
+
+Output
+------
+
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+1
+Lokesh 
+21
+Coimbatore
+Bangalore
+Ticket reserved successfully for Lokesh
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+1
+Muthuraj
+50
+Coimbatore
+Bangalore
+Ticket reserved successfully for Muthuraj
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+2
+Tickets List:
+Name: Lokesh
+Age: 21
+Source: Coimbatore
+Destination: Bangalore
+-----------------------------
+Name: Muthuraj
+Age: 50
+Source: Coimbatore
+Destination: Bangalore
+-----------------------------
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+1
+Hari
+13
+Chennai
+Madurai
+User is underAged,Cannot reserve a ticket
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+2
+Tickets List:
+Name: Lokesh
+Age: 21
+Source: Coimbatore
+Destination: Bangalore
+-----------------------------
+Name: Muthuraj
+Age: 50
+Source: Coimbatore
+Destination: Bangalore
+-----------------------------
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+1
+Adrin
+19
+Coimbatore
+Coimbatore
+You have Entered same source and destination,Please enter different locations
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+2
+Tickets List:
+Name: Lokesh
+Age: 21
+Source: Coimbatore
+Destination: Bangalore
+-----------------------------
+Name: Muthuraj
+Age: 50
+Source: Coimbatore
+Destination: Bangalore
+-----------------------------
+1.Reserve a ticket
+2.Display Ticket details
+3.Exit
+Enter a choice
+3
+Exit
+
+
+README.md
+---------
+
+Ticket Reservation System
+📄 Description
+The Ticket Reservation System is a simple Java-based console application that allows users to reserve tickets between different locations. It includes user input validation with custom exception handling, logs errors to a file, and maintains a list of reserved tickets.
+
+🧩 Components
+1. Main Class (main.Main)
+Acts as the entry point of the application.
+Provides a menu-driven interface to reserve and view tickets.
+Handles exceptions and logs errors.
+2. Models
+User (models.User): Represents the basic user entity with name and age.
+Ticket (models.Ticket): Extends User with additional fields source and destination.
+3. Service Layer
+UserService (services.UserService): Handles the business logic for creating and storing tickets.
+Validates age and checks for identical source and destination.
+4. Custom Exceptions
+invalidAgeExceptions: Thrown if the user is under 18.
+sameLocation: Thrown if the source and destination are the same.
+
+🎯 Purpose
+Learn basic Java OOP concepts.
+Practice exception handling with custom exceptions.
+Implement file logging for error handling.
+Understand how to manage multiple components in a layered application.
+
+🛠️ Design Highlights
+🚫 Custom exceptions to handle invalid user inputs.
+📝 Error logging with FileWriter to error.log.
+👥 Object-oriented structure with model-service separation.
+📋 Console-based UI for interaction.
+
+👨‍💻 Author
+Name: Lokeshwaran M
+Email: lokeshwaran.m@epssw.com
+
+
+
